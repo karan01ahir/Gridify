@@ -191,7 +191,9 @@ app.post('/api/login', (req, res) => {
 // Generate Content endpoint (AI integration)
 app.get('/api/generate', async (req, res) => {
     try {
-        const prompt = "generate an aesthetic social media collage caption, 5 hashtags, and 3 trending songs. Return ONLY valid JSON with keys: 'caption' (string), 'hashtags' (array of strings), 'songs' (array of objects with 'title' and 'artist').";
+        // Add random seed to prompt to prevent caching and get unique results every time
+        const randomSeed = Math.floor(Math.random() * 1000000);
+        const prompt = `random seed: ${randomSeed}. generate a unique aesthetic social media collage caption, 5 distinct hashtags, and 3 currently trending songs. Return ONLY valid JSON with keys: 'caption' (string), 'hashtags' (array of strings), 'songs' (array of objects with 'title' and 'artist'). Make it different every time!`;
         const response = await fetch(`https://text.pollinations.ai/prompt/${encodeURIComponent(prompt)}`);
 
         if (!response.ok) {

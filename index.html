@@ -1693,6 +1693,66 @@
                 updateEditorPreview();
             });
 
+            // Pan sliders listeners
+            panXSlider.addEventListener('input', function () {
+                currentEditValues.panX = parseInt(this.value);
+                updateEditorDisplays();
+                updateEditorPreview();
+            });
+
+            panYSlider.addEventListener('input', function () {
+                currentEditValues.panY = parseInt(this.value);
+                updateEditorDisplays();
+                updateEditorPreview();
+            });
+
+            // Mouse Dragging to Pan in Editor
+            let isDragging = false;
+            let startDragX = 0;
+            let startDragY = 0;
+            let startPanX = 0;
+            let startPanY = 0;
+
+            editorImage.addEventListener('mousedown', function (e) {
+                isDragging = true;
+                startDragX = e.clientX;
+                startDragY = e.clientY;
+                startPanX = currentEditValues.panX;
+                startPanY = currentEditValues.panY;
+                editorImage.style.cursor = 'grabbing';
+            });
+
+            window.addEventListener('mousemove', function (e) {
+                if (!isDragging) return;
+
+                const dx = e.clientX - startDragX;
+                const dy = e.clientY - startDragY;
+
+                const zoomFactor = currentEditValues.zoom / 100;
+
+                let newPanX = startPanX + Math.round(dx / zoomFactor);
+                let newPanY = startPanY + Math.round(dy / zoomFactor);
+
+                newPanX = Math.max(-100, Math.min(100, newPanX));
+                newPanY = Math.max(-100, Math.min(100, newPanY));
+
+                currentEditValues.panX = newPanX;
+                currentEditValues.panY = newPanY;
+
+                panXSlider.value = newPanX;
+                panYSlider.value = newPanY;
+
+                updateEditorDisplays();
+                updateEditorPreview();
+            });
+
+            window.addEventListener('mouseup', function () {
+                if (isDragging) {
+                    isDragging = false;
+                    editorImage.style.cursor = 'grab';
+                }
+            });
+
             // Generate Content Button Handler
             generateContentBtn.addEventListener('click', async function () {
                 if (uploadedPhotos.length === 0) {
